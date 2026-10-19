@@ -1,0 +1,44 @@
+
+name: Conform Security Scan
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  conform:
+    name: Conform / Terraform Security
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout application infrastructure
+        uses: actions/checkout@v4
+
+      - name: Checkout Conform policies
+        uses: actions/checkout@v4
+        with:
+          repository: r3drun3/conform
+          ref: v1.0.0
+          path: .conform
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install c7n-left
+        run: python -m pip install c7n-left
+
+      - name: Scan Terraform with Conform
+        run: |
+          c7n-left run \
+            --policy-dir .conform/aws/terraform \
+            --directory . \
+            --output github
