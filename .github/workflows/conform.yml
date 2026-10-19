@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: r3drun3/conform
-          ref: v1.0.0
+          ref: v0.1.0
           path: .conform
           persist-credentials: false
 
